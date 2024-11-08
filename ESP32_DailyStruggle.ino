@@ -30,6 +30,7 @@ DailyStruggleButton muteButton;
 DailyStruggleButton RepeatCalculationButton;
 DailyStruggleButton morseCodeDangerButton;
 DailyStruggleButton SendEmergMessageButton;
+
 // Time in ms you need to hold down the button to be considered a long press
 unsigned int longPressTime = 1000;
 // How many times you need to hit the button to be considered a multi-hit
@@ -53,8 +54,8 @@ void setup() {
   delay(500);
   serialSplash();
 
-  // Use set(digital pin connected to button, a callback function, type of pull-up/down) to initialise the button
-  RepeatCalculationButton.set(RepeatCalculation, RepeatCalculationCallback, INT_PULL_UP);
+//  // Use set(digital pin connected to button, a callback function, type of pull-up/down) to initialise the button
+  RepeatCalculationButton.set(SWITCH_RepeatCalculation, RepeatCalculationCallback, INT_PULL_UP);
   // You can enable long press to use this feature
   RepeatCalculationButton.enableLongPress(longPressTime);
   // You can enable multi-hit to use this feature
@@ -74,7 +75,7 @@ void setup() {
 
   SendEmergMessageButton.set(SendEmergMessage, SendEmergMessageCallback, INT_PULL_UP);
   // You can enable long press to use this feature
-  SendEmergMessageDangerButton.enableLongPress(longPressTime);
+  SendEmergMessageButton.enableLongPress(longPressTime);
   // You can enable multi-hit to use this feature
   SendEmergMessageButton.enableMultiHit(multiHitTime, multiHitTarget);
 
@@ -84,7 +85,9 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
   muteButton.poll();
-
+  morseCodeDangerButton.poll();
+  SendEmergMessageButton.poll();
+  RepeatCalculationButton.poll();
 
   delay(100);
 }//end of loop()

@@ -123,7 +123,6 @@ void muteButtonCallback(byte btnStatus) {
   }
 }//end muteButtonCallback
 
-
 void morseCodeDangerCallback(byte btnStatus) {
   switch (btnStatus) {
     case onPress:
