@@ -1,11 +1,11 @@
 /* File: ESP32_DailyStruggle
- *  For exeresizing the switches on the "homeWork2" assembly at: 
- *  https://github.com/nk25719/PMD___aka-KiCad-esp32-6leds-2switches-1pj-circuit-
- *  
- *  Author: Forrest Lee Erickson
- *  Date: 20241108
- *  License: Dedicated to the public domain
- *  
+    For exeresizing the switches on the "homeWork2" assembly at:
+    https://github.com/nk25719/PMD___aka-KiCad-esp32-6leds-2switches-1pj-circuit-
+
+    Author: Forrest Lee Erickson
+    Date: 20241108
+    License: Dedicated to the public domain
+
 */
 
 #define PROG_NAME "ESP32_DailyStruggle"
@@ -22,8 +22,14 @@
 
 #define SWITCH_RepeatCalculation 39
 #define SWITCH_MUTE 34
+#define morseCodeDanger 36
+#define SendEmergMessage 35
+
 
 DailyStruggleButton muteButton;
+DailyStruggleButton RepeatCalculationButton;
+DailyStruggleButton morseCodeDangerButton;
+DailyStruggleButton SendEmergMessageButton;
 // Time in ms you need to hold down the button to be considered a long press
 unsigned int longPressTime = 1000;
 // How many times you need to hit the button to be considered a multi-hit
@@ -37,7 +43,7 @@ void setup() {
   // put your setup code here, to run once:
   pinMode(LED_BUILTIN, OUTPUT);      // set the LED pin mode
   digitalWrite(LED_BUILTIN, HIGH);
-  pinMode(SWITCH_RepeatCalculation, INPUT_PULLUP); //The on HMWK
+
   //Serial setup
   delay(100);
   Serial.begin(BAUDRATE);
@@ -48,14 +54,29 @@ void setup() {
   serialSplash();
 
   // Use set(digital pin connected to button, a callback function, type of pull-up/down) to initialise the button
-  // Choose between INT_PULL_UP, EXT_PULL_UP and EXT_PULL_DOWN
+  RepeatCalculationButton.set(RepeatCalculation, RepeatCalculationCallback, INT_PULL_UP);
+  // You can enable long press to use this feature
+  RepeatCalculationButton.enableLongPress(longPressTime);
+  // You can enable multi-hit to use this feature
+  RepeatCalculationButton.enableMultiHit(multiHitTime, multiHitTarget);
+
   muteButton.set(SWITCH_MUTE, muteButtonCallback, INT_PULL_UP);
-  
   // You can enable long press to use this feature
   muteButton.enableLongPress(longPressTime);
-
   // You can enable multi-hit to use this feature
   muteButton.enableMultiHit(multiHitTime, multiHitTarget);
+  
+  morseCodeDangerButton.set(morseCodeDanger, morseCodeDangerCallback, INT_PULL_UP);
+  // You can enable long press to use this feature
+  morseCodeDangerButton.enableLongPress(longPressTime);
+  // You can enable multi-hit to use this feature
+  morseCodeDangerButton.enableMultiHit(multiHitTime, multiHitTarget);
+
+  SendEmergMessageButton.set(SendEmergMessage, SendEmergMessageCallback, INT_PULL_UP);
+  // You can enable long press to use this feature
+  SendEmergMessageDangerButton.enableLongPress(longPressTime);
+  // You can enable multi-hit to use this feature
+  SendEmergMessageButton.enableMultiHit(multiHitTime, multiHitTarget);
 
   digitalWrite(LED_BUILTIN, LOW);
 }//end of setup()
@@ -64,9 +85,6 @@ void loop() {
   // put your main code here, to run repeatedly:
   muteButton.poll();
 
-  if (!digitalRead(SWITCH_RepeatCalculation)) {
-    Serial.println("SWITCH_RepeatCalculation pressed");
-  }
 
   delay(100);
 }//end of loop()
@@ -91,45 +109,3 @@ void serialSplash(void) {
   Serial.println(F("==================================="));
   Serial.println();
 }//end Serial Splash
-
-// This function will be called whenever an event occurs.
-// We pass the name of this callback function in set().
-// It needs to take a parameter of the byte datatype.
-// This byte will indicate the event.
-// It needs to return void.
-void muteButtonCallback(byte btnStatus) {
-  switch (btnStatus) {
-    case onPress:
-      // Do something...
-      //      local_ptr_to_serial->println(F("SWITCH_MUTE onPress"));
-      Serial.println("SWITCH_MUTE onPress ");
-      //      currentlyMuted = !currentlyMuted;
-      //      start_of_song = millis();
-      //      annunciateAlarmLevel(local_ptr_to_serial);
-      //      printAlarmState(local_ptr_to_serial);
-      break;
-
-    // onRelease is indicated when the button is let go
-    case onRelease:
-      Serial.println("Button Released");
-      break;
-
-    // onLongPress is indidcated when you hold onto the button
-    // more than longPressTime in milliseconds
-    case onLongPress:
-      Serial.print("Buttong Long Pressed For ");
-      Serial.print(longPressTime);
-      Serial.println("ms");
-      break;
-
-    // onMultiHit is indicated when you hit the button
-    // multiHitTarget times within multihitTime in milliseconds
-    case onMultiHit:
-      Serial.print("Button Pressed ");
-      Serial.print(multiHitTarget);
-      Serial.print(" times in ");
-      Serial.print(multiHitTime);
-      Serial.println("ms");
-      break;
-  }
-}//end my button
